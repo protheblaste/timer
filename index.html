@@ -156,17 +156,8 @@
 
     function reset() {
       clearInterval(interval);
-      interval = null;
       document.getElementById("countdown").textContent = "00:00:00";
       document.getElementById("message").textContent = "";
-
-      // Clear duration inputs
-      document.getElementById("hours").value = "";
-      document.getElementById("minutes").value = "";
-      document.getElementById("seconds").value = "";
-
-      // Clear IST input
-      document.getElementById("targetTime").value = "";
     }
 
     function showISTTimer() {
@@ -194,8 +185,7 @@
 
     // IST Time-based Timer
     function startISTTimer() {
-      reset();
-
+      clearInterval(interval);
       const input = document.getElementById("targetTime").value;
       const msg = document.getElementById("message");
 
@@ -203,34 +193,6 @@
         msg.textContent = "Please select a time.";
         return;
       }
-
-      msg.textContent = "";
-
-      const now = new Date();
-      const [h, m] = input.split(':').map(Number);
-
-      let target = new Date(now);
-      target.setHours(h, m, 0, 0);
-
-      // If time already passed today, move to next day
-      if (target.getTime() <= now.getTime()) {
-        target.setDate(target.getDate() + 1);
-      }
-
-      interval = setInterval(() => {
-        const diff = target.getTime() - Date.now();
-
-        if (diff <= 0) {
-          clearInterval(interval);
-          interval = null;
-          document.getElementById("countdown").textContent = "00:00:00";
-          msg.textContent = "Time is up";
-          return;
-        }
-
-        updateDisplay(diff);
-      }, 1000);
-    }
 
       msg.textContent = "";
       const now = new Date();
@@ -257,8 +219,7 @@
 
     // Duration-based Timer
     function startDurationTimer() {
-      reset();
-
+      clearInterval(interval);
       const h = parseInt(document.getElementById("hours").value) || 0;
       const m = parseInt(document.getElementById("minutes").value) || 0;
       const s = parseInt(document.getElementById("seconds").value) || 0;
@@ -270,22 +231,6 @@
         msg.textContent = "Please enter a valid duration.";
         return;
       }
-
-      msg.textContent = "";
-
-      interval = setInterval(() => {
-        if (total <= 0) {
-          clearInterval(interval);
-          interval = null;
-          document.getElementById("countdown").textContent = "00:00:00";
-          msg.textContent = "Time is up";
-          return;
-        }
-
-        updateDisplay(total);
-        total -= 1000;
-      }, 1000);
-    }
 
       msg.textContent = "";
 
