@@ -224,7 +224,7 @@
           clearInterval(interval);
           interval = null;
           document.getElementById("countdown").textContent = "00:00:00";
-          msg.textContent = "Time is up";
+          alert("Time is up");
           return;
         }
 
@@ -247,7 +247,7 @@
         if (diff <= 0) {
           clearInterval(interval);
           document.getElementById("countdown").textContent = "00:00:00";
-          msg.textContent = "Time is up";
+          alert("Time is up");
           return;
         }
 
@@ -278,7 +278,7 @@
           clearInterval(interval);
           interval = null;
           document.getElementById("countdown").textContent = "00:00:00";
-          msg.textContent = "Time is up";
+          alert("Time is up");
           return;
         }
 
@@ -293,7 +293,7 @@
         if (total <= 0) {
           clearInterval(interval);
           document.getElementById("countdown").textContent = "00:00:00";
-          msg.textContent = "Time is up";
+          alert("Time is up");
           return;
         }
 
