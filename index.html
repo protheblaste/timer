@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Timer (IST & Duration)</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+      height: 100vh;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .menu-item {
+      padding: 12px;
+      margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: #00c6ff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    /* Main content */
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 30px 40px;
+      border-radius: 14px;
+      width: 360px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #00c6ff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #00a8e8;
+    }
+
+    .timer {
+      margin-top: 20px;
+      font-size: 28px;
+      letter-spacing: 2px;
+    }
+
+    .message {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #ffd700;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Timer Modes</h2>
+    <div class="menu-item active" onclick="showISTTimer()">
+      Timer by Time (IST)
+    </div>
+    <div class="menu-item" onclick="showDurationTimer()">
+      Timer by Hours / Minutes / Seconds
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="container">
+      <h1 id="title">Timer by Time (IST)</h1>
+
+      <!-- IST Time Timer -->
+      <div id="istTimer">
+        <p>Select the time (IST) when the timer should end</p>
+        <input type="time" id="targetTime" />
+        <button onclick="startISTTimer()">Start Timer</button>
+      </div>
+
+      <!-- Duration Timer -->
+      <div id="durationTimer" class="hidden">
+        <p>Set a timer duration</p>
+        <div class="row">
+          <input type="number" id="hours" placeholder="Hours" min="0" />
+          <input type="number" id="minutes" placeholder="Minutes" min="0" />
+          <input type="number" id="seconds" placeholder="Seconds" min="0" />
+        </div>
+        <button onclick="startDurationTimer()">Start Timer</button>
+      </div>
+
+      <div class="timer" id="countdown">00:00:00</div>
+      <div class="message" id="message"></div>
+    </div>
+  </div>
+
+  <script>
+    let interval;
+
+    function reset() {
+      clearInterval(interval);
+      document.getElementById("countdown").textContent = "00:00:00";
+      document.getElementById("message").textContent = "";
+    }
+
+    function showISTTimer() {
+      reset();
+      document.getElementById("title").textContent = "Timer by Time (IST)";
+      document.getElementById("istTimer").classList.remove("hidden");
+      document.getElementById("durationTimer").classList.add("hidden");
+      setActive(0);
+    }
+
+    function showDurationTimer() {
+      reset();
+      document.getElementById("title").textContent = "Timer by Duration";
+      document.getElementById("istTimer").classList.add("hidden");
+      document.getElementById("durationTimer").classList.remove("hidden");
+      setActive(1);
+    }
+
+    function setActive(index) {
+      const items = document.querySelectorAll('.menu-item');
+      items.forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
+    }
+
+    // IST Time-based Timer
+    function startISTTimer() {
+      clearInterval(interval);
+      const input = document.getElementById("targetTime").value;
+      const msg = document.getElementById("message");
+
+      if (!input) {
+        msg.textContent = "Please select a time.";
+        return;
+      }
+
+      msg.textContent = "";
+      const now = new Date();
+      const [h, m] = input.split(':');
+
+      let target = new Date();
+      target.setHours(h, m, 0, 0);
+
+      if (target <= now) target.setDate(target.getDate() + 1);
+
+      interval = setInterval(() => {
+        const diff = target - new Date();
+
+        if (diff <= 0) {
+          clearInterval(interval);
+          document.getElementById("countdown").textContent = "00:00:00";
+          msg.textContent = "Time is up";
+          return;
+        }
+
+        updateDisplay(diff);
+      }, 1000);
+    }
+
+    // Duration-based Timer
+    function startDurationTimer() {
+      clearInterval(interval);
+      const h = parseInt(document.getElementById("hours").value) || 0;
+      const m = parseInt(document.getElementById("minutes").value) || 0;
+      const s = parseInt(document.getElementById("seconds").value) || 0;
+      const msg = document.getElementById("message");
+
+      let total = (h * 3600 + m * 60 + s) * 1000;
+
+      if (total <= 0) {
+        msg.textContent = "Please enter a valid duration.";
+        return;
+      }
+
+      msg.textContent = "";
+
+      interval = setInterval(() => {
+        if (total <= 0) {
+          clearInterval(interval);
+          document.getElementById("countdown").textContent = "00:00:00";
+          msg.textContent = "Time is up";
+          return;
+        }
+
+        updateDisplay(total);
+        total -= 1000;
+      }, 1000);
+    }
+
+    function updateDisplay(ms) {
+      const hrs = String(Math.floor(ms / 3600000)).padStart(2, '0');
+      const mins = String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0');
+      const secs = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+      document.getElementById("countdown").textContent = `${hrs}:${mins}:${secs}`;
+    }
+  </script>
+</body>
+</html>
