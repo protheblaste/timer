@@ -3,33 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Timer</title>
+  <title>Smart Timer Pro</title>
   <style>
-    * { box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { margin: 0; display: flex; height: 100vh; background: #f4f6f8; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { margin: 0; display: flex; height: 100vh; background: #f0f2f5; }
 
-    /* Sidebar */
+    /* --- Side Menu Styling --- */
     .sidebar {
-      width: 240px;
+      width: 260px;
       background: #0f172a;
       color: #fff;
-      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.2);
     }
-    .sidebar h2 { text-align: center; margin-bottom: 30px; }
+    .sidebar h2 { 
+      padding: 30px 20px; 
+      margin: 0; 
+      font-size: 22px; 
+      background: #1e293b; 
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+    .menu { padding: 20px 10px; flex-grow: 1; }
     .menu button {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
+      padding: 15px;
+      margin-bottom: 10px;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 15px;
-      background: #1e293b;
-      color: #fff;
+      font-weight: 500;
+      background: transparent;
+      color: #94a3b8;
+      text-align: left;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
     }
-    .menu button:hover { background: #334155; }
+    .menu button.nav-active {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+    .menu button:hover:not(.nav-active) {
+      background: #1e293b;
+      color: #f8fafc;
+      padding-left: 20px;
+    }
 
-    /* Main */
+    /* --- Main Content --- */
     .main {
       flex: 1;
       padding: 40px;
@@ -37,70 +61,76 @@
       justify-content: center;
       align-items: center;
     }
-
     .card {
       background: #fff;
-      padding: 30px;
+      padding: 35px;
       width: 100%;
-      max-width: 420px;
-      border-radius: 14px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      max-width: 450px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.08);
       display: none;
+      animation: fadeIn 0.4s ease;
     }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .card.active { display: block; }
 
-    h3 { margin-bottom: 20px; text-align: center; }
+    h3 { margin-top: 0; margin-bottom: 25px; text-align: center; color: #1e293b; }
 
-    .row { display: flex; gap: 10px; margin-bottom: 15px; }
-    select, input {
+    .row { display: flex; gap: 10px; margin-bottom: 20px; }
+    input, select {
       flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #e2e8f0;
       font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
     }
+    input:focus { border-color: #2563eb; }
 
+    .actions { display: flex; flex-direction: column; gap: 12px; }
     .actions button {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
+      padding: 14px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #2563eb;
       color: #fff;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.2s;
     }
     .actions button:hover { background: #1d4ed8; }
+    .actions button.reset { background: #f1f5f9; color: #64748b; }
+    .actions button.reset:hover { background: #e2e8f0; color: #0f172a; }
 
     .display {
-      margin-top: 20px;
-      font-size: 22px;
+      margin-top: 25px;
+      font-size: 28px;
       text-align: center;
-      font-weight: bold;
+      font-weight: 700;
+      color: #1e293b;
+      font-family: 'Courier New', Courier, monospace;
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="sidebar">
-    <h2>Timer Menu</h2>
+    <h2>Smart Timer</h2>
     <div class="menu">
-      <button onclick="showCard('ist')">IST Time Timer</button>
-      <button onclick="showCard('clock')">Hour-Minute Timer</button>
+      <button id="btn-ist" class="nav-active" onclick="showCard('ist')">🕒 IST Target Timer</button>
+      <button id="btn-clock" onclick="showCard('clock')">⏲️ H:M:S Countdown</button>
     </div>
   </div>
 
-  <!-- Main -->
   <div class="main">
-
-    <!-- IST Timer -->
     <div class="card active" id="ist">
-      <h3>IST Based Timer</h3>
+      <h3>Target IST Time</h3>
       <div class="row">
-        <input type="number" id="istHour" placeholder="Hour" min="1" max="12">
-        <input type="number" id="istMinute" placeholder="Minute" min="0" max="59">
+        <input type="number" id="istHour" placeholder="HH" min="1" max="12">
+        <input type="number" id="istMinute" placeholder="MM" min="0" max="59">
         <select id="istAmPm">
           <option value="AM">AM</option>
           <option value="PM">PM</option>
@@ -108,23 +138,24 @@
       </div>
       <div class="actions">
         <button onclick="startISTTimer()">Start Timer</button>
+        <button class="reset" onclick="resetISTTimer()">Reset</button>
       </div>
-      <div class="display" id="istDisplay">Waiting...</div>
+      <div class="display" id="istDisplay">00:00:00</div>
     </div>
 
-    <!-- Clock Timer -->
     <div class="card" id="clock">
-      <h3>Hour : Minute Timer</h3>
+      <h3>Duration Countdown</h3>
       <div class="row">
-        <input type="number" id="cHour" placeholder="Hours" min="0">
-        <input type="number" id="cMinute" placeholder="Minutes" min="0" max="59">
+        <input type="number" id="cHour" placeholder="HH" min="0">
+        <input type="number" id="cMinute" placeholder="MM" min="0" max="59">
+        <input type="number" id="cSecond" placeholder="SS" min="0" max="59">
       </div>
       <div class="actions">
-        <button onclick="startClockTimer()">Start Timer</button>
+        <button onclick="startClockTimer()">Start Countdown</button>
+        <button class="reset" onclick="resetClockTimer()">Reset</button>
       </div>
-      <div class="display" id="clockDisplay">Waiting...</div>
+      <div class="display" id="clockDisplay">00:00:00</div>
     </div>
-
   </div>
 
 <script>
@@ -132,68 +163,99 @@
 
   function showCard(id) {
     document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.menu button').forEach(b => b.classList.remove('nav-active'));
     document.getElementById(id).classList.add('active');
+    document.getElementById('btn-' + id).classList.add('nav-active');
     clearInterval(interval);
   }
 
+  // --- IST TIMER ---
   function startISTTimer() {
     clearInterval(interval);
-
     const h = parseInt(document.getElementById('istHour').value);
     const m = parseInt(document.getElementById('istMinute').value);
     const ampm = document.getElementById('istAmPm').value;
 
     if (isNaN(h) || isNaN(m)) {
-      alert('Please enter valid time');
+      alert('Please enter a valid Hour and Minute.');
       return;
     }
 
     const now = new Date();
     let target = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-
     let hour24 = h % 12;
     if (ampm === 'PM') hour24 += 12;
 
     target.setHours(hour24, m, 0, 0);
     if (target <= now) target.setDate(target.getDate() + 1);
 
-    interval = setInterval(() => {
+    // Function to run logic immediately
+    const updateIST = () => {
       const diff = target - new Date();
       if (diff <= 0) {
-        document.getElementById('istDisplay').innerText = 'Time Reached!';
         clearInterval(interval);
+        document.getElementById('istDisplay').innerText = '00:00:00';
+        alert('IST Timer: Target time reached!');
         return;
       }
-      const mins = Math.floor(diff / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
-      document.getElementById('istDisplay').innerText = `${mins}m ${secs}s remaining`;
-    }, 1000);
+      const hh = Math.floor(diff / 3600000);
+      const mm = Math.floor((diff % 3600000) / 60000);
+      const ss = Math.floor((diff % 60000) / 1000);
+      document.getElementById('istDisplay').innerText = 
+        `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+    };
+
+    updateIST(); // Run immediately
+    interval = setInterval(updateIST, 1000); // Then start loop
   }
 
+  function resetISTTimer() {
+    clearInterval(interval);
+    document.getElementById('istHour').value = '';
+    document.getElementById('istMinute').value = '';
+    document.getElementById('istDisplay').innerText = '00:00:00';
+  }
+
+  // --- H:M:S COUNTDOWN TIMER ---
   function startClockTimer() {
     clearInterval(interval);
-
     let h = parseInt(document.getElementById('cHour').value) || 0;
     let m = parseInt(document.getElementById('cMinute').value) || 0;
-    let total = h * 3600 + m * 60;
+    let s = parseInt(document.getElementById('cSecond').value) || 0;
+    let totalSeconds = (h * 3600) + (m * 60) + s;
 
-    if (total <= 0) {
-      alert('Enter valid duration');
+    if (totalSeconds <= 0) {
+      alert('Please enter a duration greater than zero.');
       return;
     }
 
-    interval = setInterval(() => {
-      if (total <= 0) {
-        document.getElementById('clockDisplay').innerText = 'Timer Finished!';
+    const updateClock = () => {
+      if (totalSeconds < 0) { // Check < 0 to ensure the 00:00:00 displays before alert
         clearInterval(interval);
+        alert('Countdown Timer: Time is up!');
         return;
       }
-      total--;
-      let hh = Math.floor(total / 3600);
-      let mm = Math.floor((total % 3600) / 60);
-      let ss = total % 60;
-      document.getElementById('clockDisplay').innerText = `${hh}h ${mm}m ${ss}s`;
-    }, 1000);
+      
+      let displayH = Math.floor(totalSeconds / 3600);
+      let displayM = Math.floor((totalSeconds % 3600) / 60);
+      let displayS = totalSeconds % 60;
+
+      document.getElementById('clockDisplay').innerText = 
+        `${String(displayH).padStart(2, '0')}:${String(displayM).padStart(2, '0')}:${String(displayS).padStart(2, '0')}`;
+      
+      totalSeconds--;
+    };
+
+    updateClock(); // Run immediately
+    interval = setInterval(updateClock, 1000);
+  }
+
+  function resetClockTimer() {
+    clearInterval(interval);
+    document.getElementById('cHour').value = '';
+    document.getElementById('cMinute').value = '';
+    document.getElementById('cSecond').value = '';
+    document.getElementById('clockDisplay').innerText = '00:00:00';
   }
 </script>
 
