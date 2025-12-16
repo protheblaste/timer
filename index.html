@@ -3,256 +3,199 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Advanced Timer (IST & Duration)</title>
+  <title>Smart Timer</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      color: #fff;
-      height: 100vh;
-      display: flex;
-    }
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; display: flex; height: 100vh; background: #f4f6f8; }
 
     /* Sidebar */
     .sidebar {
-      width: 260px;
-      background: rgba(0, 0, 0, 0.5);
+      width: 240px;
+      background: #0f172a;
+      color: #fff;
       padding: 20px;
-      box-sizing: border-box;
     }
-
-    .sidebar h2 {
-      font-size: 18px;
-      margin-bottom: 15px;
-    }
-
-    .menu-item {
+    .sidebar h2 { text-align: center; margin-bottom: 30px; }
+    .menu button {
+      width: 100%;
       padding: 12px;
-      margin-bottom: 10px;
-      background: rgba(255, 255, 255, 0.1);
+      margin-bottom: 12px;
+      border: none;
       border-radius: 8px;
       cursor: pointer;
+      font-size: 15px;
+      background: #1e293b;
+      color: #fff;
     }
+    .menu button:hover { background: #334155; }
 
-    .menu-item:hover,
-    .menu-item.active {
-      background: #00c6ff;
-      color: #000;
-      font-weight: bold;
-    }
-
-    /* Main content */
-    .content {
+    /* Main */
+    .main {
       flex: 1;
+      padding: 40px;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
     }
 
-    .container {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 30px 40px;
+    .card {
+      background: #fff;
+      padding: 30px;
+      width: 100%;
+      max-width: 420px;
       border-radius: 14px;
-      width: 360px;
-      text-align: center;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    h1 {
-      font-size: 22px;
-      margin-bottom: 15px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 12px;
-      border-radius: 6px;
-      border: none;
-    }
-
-    .row {
-      display: flex;
-      gap: 8px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #00c6ff;
-      color: #000;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #00a8e8;
-    }
-
-    .timer {
-      margin-top: 20px;
-      font-size: 28px;
-      letter-spacing: 2px;
-    }
-
-    .message {
-      margin-top: 10px;
-      font-size: 16px;
-      color: #ffd700;
-    }
-
-    .hidden {
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       display: none;
+    }
+    .card.active { display: block; }
+
+    h3 { margin-bottom: 20px; text-align: center; }
+
+    .row { display: flex; gap: 10px; margin-bottom: 15px; }
+    select, input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .actions button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .actions button:hover { background: #1d4ed8; }
+
+    .display {
+      margin-top: 20px;
+      font-size: 22px;
+      text-align: center;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+
   <!-- Sidebar -->
   <div class="sidebar">
-    <h2>Timer Modes</h2>
-    <div class="menu-item active" onclick="showISTTimer()">
-      Timer by Time (IST)
-    </div>
-    <div class="menu-item" onclick="showDurationTimer()">
-      Timer by Hours / Minutes / Seconds
+    <h2>Timer Menu</h2>
+    <div class="menu">
+      <button onclick="showCard('ist')">IST Time Timer</button>
+      <button onclick="showCard('clock')">Hour-Minute Timer</button>
     </div>
   </div>
 
-  <!-- Main Content -->
-  <div class="content">
-    <div class="container">
-      <h1 id="title">Timer by Time (IST)</h1>
+  <!-- Main -->
+  <div class="main">
 
-      <!-- IST Time Timer -->
-      <div id="istTimer">
-        <p>Select the time (IST) when the timer should end</p>
-        <input type="time" id="targetTime" />
+    <!-- IST Timer -->
+    <div class="card active" id="ist">
+      <h3>IST Based Timer</h3>
+      <div class="row">
+        <input type="number" id="istHour" placeholder="Hour" min="1" max="12">
+        <input type="number" id="istMinute" placeholder="Minute" min="0" max="59">
+        <select id="istAmPm">
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
+      </div>
+      <div class="actions">
         <button onclick="startISTTimer()">Start Timer</button>
       </div>
-
-      <!-- Duration Timer -->
-      <div id="durationTimer" class="hidden">
-        <p>Set a timer duration</p>
-        <div class="row">
-          <input type="number" id="hours" placeholder="Hours" min="0" />
-          <input type="number" id="minutes" placeholder="Minutes" min="0" />
-          <input type="number" id="seconds" placeholder="Seconds" min="0" />
-        </div>
-        <button onclick="startDurationTimer()">Start Timer</button>
-      </div>
-
-      <div class="timer" id="countdown">00:00:00</div>
-      <div class="message" id="message"></div>
+      <div class="display" id="istDisplay">Waiting...</div>
     </div>
+
+    <!-- Clock Timer -->
+    <div class="card" id="clock">
+      <h3>Hour : Minute Timer</h3>
+      <div class="row">
+        <input type="number" id="cHour" placeholder="Hours" min="0">
+        <input type="number" id="cMinute" placeholder="Minutes" min="0" max="59">
+      </div>
+      <div class="actions">
+        <button onclick="startClockTimer()">Start Timer</button>
+      </div>
+      <div class="display" id="clockDisplay">Waiting...</div>
+    </div>
+
   </div>
 
-  <script>
-    let interval;
+<script>
+  let interval;
 
-    function reset() {
-      clearInterval(interval);
-      document.getElementById("countdown").textContent = "00:00:00";
-      document.getElementById("message").textContent = "";
+  function showCard(id) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    clearInterval(interval);
+  }
+
+  function startISTTimer() {
+    clearInterval(interval);
+
+    const h = parseInt(document.getElementById('istHour').value);
+    const m = parseInt(document.getElementById('istMinute').value);
+    const ampm = document.getElementById('istAmPm').value;
+
+    if (isNaN(h) || isNaN(m)) {
+      alert('Please enter valid time');
+      return;
     }
 
-    function showISTTimer() {
-      reset();
-      document.getElementById("title").textContent = "Timer by Time (IST)";
-      document.getElementById("istTimer").classList.remove("hidden");
-      document.getElementById("durationTimer").classList.add("hidden");
-      setActive(0);
-    }
+    const now = new Date();
+    let target = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
 
-    function showDurationTimer() {
-      reset();
-      document.getElementById("title").textContent = "Timer by Duration";
-      document.getElementById("istTimer").classList.add("hidden");
-      document.getElementById("durationTimer").classList.remove("hidden");
-      setActive(1);
-    }
+    let hour24 = h % 12;
+    if (ampm === 'PM') hour24 += 12;
 
-    function setActive(index) {
-      const items = document.querySelectorAll('.menu-item');
-      items.forEach((item, i) => {
-        item.classList.toggle('active', i === index);
-      });
-    }
+    target.setHours(hour24, m, 0, 0);
+    if (target <= now) target.setDate(target.getDate() + 1);
 
-    // IST Time-based Timer
-    function startISTTimer() {
-      clearInterval(interval);
-      const input = document.getElementById("targetTime").value;
-      const msg = document.getElementById("message");
-
-      if (!input) {
-        msg.textContent = "Please select a time.";
+    interval = setInterval(() => {
+      const diff = target - new Date();
+      if (diff <= 0) {
+        document.getElementById('istDisplay').innerText = 'Time Reached!';
+        clearInterval(interval);
         return;
       }
+      const mins = Math.floor(diff / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      document.getElementById('istDisplay').innerText = `${mins}m ${secs}s remaining`;
+    }, 1000);
+  }
 
-      msg.textContent = "";
-      const now = new Date();
-      const [h, m] = input.split(':');
+  function startClockTimer() {
+    clearInterval(interval);
 
-      let target = new Date();
-      target.setHours(h, m, 0, 0);
+    let h = parseInt(document.getElementById('cHour').value) || 0;
+    let m = parseInt(document.getElementById('cMinute').value) || 0;
+    let total = h * 3600 + m * 60;
 
-      if (target <= now) target.setDate(target.getDate() + 1);
-
-      interval = setInterval(() => {
-        const diff = target - new Date();
-
-        if (diff <= 0) {
-          clearInterval(interval);
-          document.getElementById("countdown").textContent = "00:00:00";
-          msg.textContent = "Time is up";
-          return;
-        }
-
-        updateDisplay(diff);
-      }, 1000);
+    if (total <= 0) {
+      alert('Enter valid duration');
+      return;
     }
 
-    // Duration-based Timer
-    function startDurationTimer() {
-      clearInterval(interval);
-      const h = parseInt(document.getElementById("hours").value) || 0;
-      const m = parseInt(document.getElementById("minutes").value) || 0;
-      const s = parseInt(document.getElementById("seconds").value) || 0;
-      const msg = document.getElementById("message");
-
-      let total = (h * 3600 + m * 60 + s) * 1000;
-
+    interval = setInterval(() => {
       if (total <= 0) {
-        msg.textContent = "Please enter a valid duration.";
+        document.getElementById('clockDisplay').innerText = 'Timer Finished!';
+        clearInterval(interval);
         return;
       }
+      total--;
+      let hh = Math.floor(total / 3600);
+      let mm = Math.floor((total % 3600) / 60);
+      let ss = total % 60;
+      document.getElementById('clockDisplay').innerText = `${hh}h ${mm}m ${ss}s`;
+    }, 1000);
+  }
+</script>
 
-      msg.textContent = "";
-
-      interval = setInterval(() => {
-        if (total <= 0) {
-          clearInterval(interval);
-          document.getElementById("countdown").textContent = "00:00:00";
-          msg.textContent = "Time is up";
-          return;
-        }
-
-        updateDisplay(total);
-        total -= 1000;
-      }, 1000);
-    }
-
-    function updateDisplay(ms) {
-      const hrs = String(Math.floor(ms / 3600000)).padStart(2, '0');
-      const mins = String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0');
-      const secs = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
-      document.getElementById("countdown").textContent = `${hrs}:${mins}:${secs}`;
-    }
-  </script>
 </body>
 </html>
