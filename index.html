@@ -58,8 +58,10 @@
       flex: 1;
       padding: 40px;
       display: flex;
+      flex-direction: column; /* Changed to column to stack cards and footer */
       justify-content: center;
       align-items: center;
+      position: relative;
     }
     .card {
       background: #fff;
@@ -113,6 +115,14 @@
       color: #1e293b;
       font-family: 'Courier New', Courier, monospace;
     }
+
+    /* --- Footer Credit Styling --- */
+    .footer-credit {
+      margin-top: 30px;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -156,6 +166,8 @@
       </div>
       <div class="display" id="clockDisplay">00:00:00</div>
     </div>
+
+    <div class="footer-credit">Made by protheblaste</div>
   </div>
 
 <script>
@@ -189,7 +201,6 @@
     target.setHours(hour24, m, 0, 0);
     if (target <= now) target.setDate(target.getDate() + 1);
 
-    // Function to run logic immediately
     const updateIST = () => {
       const diff = target - new Date();
       if (diff <= 0) {
@@ -205,8 +216,8 @@
         `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
     };
 
-    updateIST(); // Run immediately
-    interval = setInterval(updateIST, 1000); // Then start loop
+    updateIST();
+    interval = setInterval(updateIST, 1000);
   }
 
   function resetISTTimer() {
@@ -230,7 +241,7 @@
     }
 
     const updateClock = () => {
-      if (totalSeconds < 0) { // Check < 0 to ensure the 00:00:00 displays before alert
+      if (totalSeconds < 0) {
         clearInterval(interval);
         alert('Countdown Timer: Time is up!');
         return;
@@ -246,7 +257,7 @@
       totalSeconds--;
     };
 
-    updateClock(); // Run immediately
+    updateClock();
     interval = setInterval(updateClock, 1000);
   }
 
